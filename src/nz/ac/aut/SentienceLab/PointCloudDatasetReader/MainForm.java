@@ -287,7 +287,8 @@ public class MainForm extends javax.swing.JFrame
                 {
                     execute = false;
                 }
-
+                ds.closeSource();
+                
                 if ( execute )
                 {
                     prgConverting.setIndeterminate(false);
