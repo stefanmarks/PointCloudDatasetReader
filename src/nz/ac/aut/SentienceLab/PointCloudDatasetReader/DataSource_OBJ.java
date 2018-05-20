@@ -45,6 +45,14 @@ public class DataSource_OBJ implements DataSource
         return success;
     }
 
+    
+    @Override
+    public long getPointCount()
+    {
+        return -1; // don't know
+    }
+    
+    
     @Override
     public PointData readSource() throws IOException, ParseException
     {
@@ -52,9 +60,7 @@ public class DataSource_OBJ implements DataSource
         String   line = reader.readLine();
         if ( line != null )
         {
-            line.trim();
-            
-            String[] parts = line.split(separators[separatorIdx]);
+            String[] parts = line.trim().split(separators[separatorIdx]);
             while ( parts.length < 3 )
             {
                 separatorIdx = (separatorIdx + 1) % separators.length;
@@ -105,7 +111,6 @@ public class DataSource_OBJ implements DataSource
 
     
     private       BufferedReader reader;
-    private       String[]       headers;
     private final String[]       separators = { ",", "\t", " " };   
     private       int            separatorIdx;
 }

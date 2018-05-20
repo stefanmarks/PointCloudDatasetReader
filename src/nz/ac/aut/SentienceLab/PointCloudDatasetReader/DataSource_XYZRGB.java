@@ -32,8 +32,8 @@ public class DataSource_XYZRGB implements DataSource
             header  = header.replace("//", "").trim().replace(" ", "").toLowerCase();
             headers = header.split(",");
             
-            String count = reader.readLine();
-            System.out.println("Opening XYZRGB file with " + count + " points "
+            pointCount = Long.parseLong(reader.readLine());
+            System.out.println("Opening XYZRGB file with " + pointCount + " points "
                 + "and headers '" + header + "'");
             
             success = true;
@@ -45,6 +45,14 @@ public class DataSource_XYZRGB implements DataSource
         return success;
     }
 
+    
+    @Override
+    public long getPointCount()
+    {
+        return pointCount;
+    }
+    
+    
     @Override
     public PointData readSource() throws IOException, ParseException
     {
@@ -54,7 +62,7 @@ public class DataSource_XYZRGB implements DataSource
         {
             pd = new PointData();
             
-            String[] parts = line.split(separators[separatorIdx]);
+            String[] parts = line.trim().split(separators[separatorIdx]);
             while ( parts.length < 3 )
             {
                 separatorIdx = (separatorIdx + 1) % separators.length;
@@ -110,6 +118,7 @@ public class DataSource_XYZRGB implements DataSource
     
     private       BufferedReader reader;
     private       String[]       headers;
+    private       long           pointCount;
     private final String[]       separators = { ",", "\t", " " };   
     private       int            separatorIdx;
 }

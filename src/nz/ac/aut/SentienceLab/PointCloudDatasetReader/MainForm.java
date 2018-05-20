@@ -8,6 +8,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
@@ -23,9 +24,32 @@ public class MainForm extends javax.swing.JFrame
      */
     public MainForm()
     {
+        settings = new Settings();
         initComponents();
+        readSettings();
     }
 
+    
+    private void readSettings()
+    {
+        txtSource.setText(settings.getSourceFile());
+        cbxSourceCSys.setSelectedItem(settings.getSourceCSys());
+        txtDestination.setText(settings.getDestinationFile());
+        cbxDestinationCSys.setSelectedItem(settings.getDestinationCSys());
+        chkRandomise.setSelected(rootPaneCheckingEnabled);
+    }
+    
+    
+    private void writeSettings()
+    {
+        settings.setSourceFile(txtSource.getText());
+        settings.setSourceCSys((CoordinateSystem) cbxSourceCSys.getSelectedItem());
+        settings.setDestinationFile(txtDestination.getText());
+        settings.setDestinationCSys((CoordinateSystem) cbxDestinationCSys.getSelectedItem());
+        settings.setRandomiseFlag(chkRandomise.isSelected());
+    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -37,22 +61,25 @@ public class MainForm extends javax.swing.JFrame
     {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jFormattedTextField1 = new javax.swing.JFormattedTextField();
         javax.swing.JPanel pnlMain = new javax.swing.JPanel();
         pnlSettings = new javax.swing.JPanel();
         javax.swing.JLabel lblSource = new javax.swing.JLabel();
         txtSource = new javax.swing.JTextField();
         btnSource = new javax.swing.JButton();
-        javax.swing.JLabel lblType = new javax.swing.JLabel();
-        cbxType = new javax.swing.JComboBox<>();
+        javax.swing.JLabel lblSourceType = new javax.swing.JLabel();
+        cbxSourceType = new javax.swing.JComboBox<>();
+        javax.swing.JLabel lblSourceCSys = new javax.swing.JLabel();
+        cbxSourceCSys = new javax.swing.JComboBox<>();
         javax.swing.JLabel lblDestination = new javax.swing.JLabel();
         txtDestination = new javax.swing.JTextField();
         btnDestination = new javax.swing.JButton();
+        javax.swing.JLabel lblDestinationCSys = new javax.swing.JLabel();
+        cbxDestinationCSys = new javax.swing.JComboBox<>();
+        javax.swing.JLabel lblRandomise = new javax.swing.JLabel();
+        chkRandomise = new javax.swing.JCheckBox();
         javax.swing.JPanel pnlButtons = new javax.swing.JPanel();
         btnStart = new javax.swing.JButton();
         prgConverting = new javax.swing.JProgressBar();
-
-        jFormattedTextField1.setText("jFormattedTextField1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -91,42 +118,61 @@ public class MainForm extends javax.swing.JFrame
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 10, 0);
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 0);
         pnlSettings.add(btnSource, gridBagConstraints);
 
-        lblType.setText("Source Type:");
+        lblSourceType.setText("Source Type:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 5);
-        pnlSettings.add(lblType, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
+        pnlSettings.add(lblSourceType, gridBagConstraints);
 
-        cbxType.setModel(new DefaultComboBoxModel(new DataSource[] { new DataSource_XYZRGB(), new DataSource_OBJ() }));
+        cbxSourceType.setModel(new DefaultComboBoxModel(new DataSource[] { new DataSource_XYZRGB(), new DataSource_OBJ() }));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        pnlSettings.add(cbxType, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
+        pnlSettings.add(cbxSourceType, gridBagConstraints);
 
-        lblDestination.setText("Destination:");
+        lblSourceCSys.setText("Source CSys:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 5);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
+        pnlSettings.add(lblSourceCSys, gridBagConstraints);
+
+        cbxSourceCSys.setModel(new DefaultComboBoxModel(new CoordinateSystem[] { CoordinateSystem.XR_YF_ZU, CoordinateSystem.XR_YU_ZF }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
+        pnlSettings.add(cbxSourceCSys, gridBagConstraints);
+
+        lblDestination.setText("Destination:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
         pnlSettings.add(lblDestination, gridBagConstraints);
 
         txtDestination.setText(".\\output.bytes");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
         pnlSettings.add(txtDestination, gridBagConstraints);
 
         btnDestination.setText("...");
@@ -139,10 +185,43 @@ public class MainForm extends javax.swing.JFrame
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(10, 5, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 0);
         pnlSettings.add(btnDestination, gridBagConstraints);
+
+        lblDestinationCSys.setText("Destination CSys:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
+        pnlSettings.add(lblDestinationCSys, gridBagConstraints);
+
+        cbxDestinationCSys.setModel(new DefaultComboBoxModel(new CoordinateSystem[] { CoordinateSystem.XR_YF_ZU, CoordinateSystem.XR_YU_ZF }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
+        pnlSettings.add(cbxDestinationCSys, gridBagConstraints);
+
+        lblRandomise.setText("Randomise:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
+        pnlSettings.add(lblRandomise, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
+        pnlSettings.add(chkRandomise, gridBagConstraints);
 
         pnlMain.add(pnlSettings, java.awt.BorderLayout.CENTER);
 
@@ -179,6 +258,7 @@ public class MainForm extends javax.swing.JFrame
         }
         else
         {
+            writeSettings();
             converter       = new Converter();
             converterThread = new Thread(converter);
             converterThread.start();
@@ -221,18 +301,14 @@ public class MainForm extends javax.swing.JFrame
     
     
     /**
+     * Main program entry point.
      * @param args the command line arguments
      */
     public static void main(String args[])
     {
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable()
+        java.awt.EventQueue.invokeLater(() ->
         {
-            @Override
-            public void run()
-            {
-                new MainForm().setVisible(true);
-            }
+            new MainForm().setVisible(true);
         });
     }
 
@@ -240,8 +316,10 @@ public class MainForm extends javax.swing.JFrame
     private javax.swing.JButton btnDestination;
     private javax.swing.JButton btnSource;
     private javax.swing.JButton btnStart;
-    private javax.swing.JComboBox<String> cbxType;
-    private javax.swing.JFormattedTextField jFormattedTextField1;
+    private javax.swing.JComboBox<String> cbxDestinationCSys;
+    private javax.swing.JComboBox<String> cbxSourceCSys;
+    private javax.swing.JComboBox<String> cbxSourceType;
+    private javax.swing.JCheckBox chkRandomise;
     private javax.swing.JPanel pnlSettings;
     private javax.swing.JProgressBar prgConverting;
     private javax.swing.JTextField txtDestination;
@@ -259,11 +337,21 @@ public class MainForm extends javax.swing.JFrame
                 execute = true;
                 initialise();
                 
-                DataSource ds = (DataSource) cbxType.getSelectedItem();
+                CoordinateSystem csysSrc = (CoordinateSystem) cbxSourceCSys.getSelectedItem();
+                CoordinateSystem csysDst = (CoordinateSystem) cbxDestinationCSys.getSelectedItem();
+                
+                DataSource ds = (DataSource) cbxSourceType.getSelectedItem();
                 List<PointData> pointList = new ArrayList<>();
                 if ( ds.openSource(new File(txtSource.getText())) )
                 {
-                    PointData p = null;    
+                    // set progress bar determinate when point count known
+                    long pointCount = ds.getPointCount();
+                    prgConverting.setIndeterminate(pointCount < 0);
+                    
+                    final int updateInterval = 1000;
+                    int updateIdx = 0;
+                                
+                    PointData p = null;
                     do
                     {
                         try
@@ -271,8 +359,24 @@ public class MainForm extends javax.swing.JFrame
                             p = ds.readSource();
                             if ( p != null)
                             {
+                                CoordinateSystem.convert(p, csysSrc, csysDst);
                                 pointList.add(p);
-                                prgConverting.setString("" + pointList.size());
+                                
+                                updateIdx++;
+                                if (updateIdx > updateInterval)
+                                {
+                                    if (pointCount > 0)
+                                    {
+                                        int percent = (int) (100 * pointList.size() / pointCount);
+                                        prgConverting.setValue(percent);
+                                        prgConverting.setString(pointList.size() + " / " + pointCount + " (" + percent + "%)");
+                                    }
+                                    else
+                                    {
+                                        prgConverting.setString(Long.toString(pointList.size()));
+                                    }
+                                    updateIdx = 0;   
+                                }                                
                             }
                         }
                         catch (IOException | ParseException e)
@@ -292,8 +396,14 @@ public class MainForm extends javax.swing.JFrame
                 if ( execute )
                 {
                     prgConverting.setIndeterminate(false);
-                    prgConverting.setValue(0);
 
+                    if (chkRandomise.isSelected())
+                    {
+                        prgConverting.setString("Randomising...");
+                        Collections.shuffle(pointList);
+                    }
+                    
+                    prgConverting.setValue(0);
                     try
                     {
                         FileChannel chn = new FileOutputStream(txtDestination.getText()).getChannel();
@@ -316,11 +426,12 @@ public class MainForm extends javax.swing.JFrame
                             if (percent != oldPercent)
                             {
                                 oldPercent = percent;
-                                prgConverting.setString(index + "/" + pointList.size() + "(" + percent + "%)");
+                                prgConverting.setString(index + " / " + pointList.size() + " (" + percent + "%)");
                                 prgConverting.setValue(percent);
                             }
+                            if ( !execute ) break;
                         }
-
+                        
                         chn.close();
                     }
                     catch (IOException e)
@@ -372,6 +483,7 @@ public class MainForm extends javax.swing.JFrame
         private volatile boolean execute;
     }
     
-    private Thread    converterThread;
-    private Converter converter;
+    private final Settings  settings;
+    private       Thread    converterThread;
+    private       Converter converter;
 }

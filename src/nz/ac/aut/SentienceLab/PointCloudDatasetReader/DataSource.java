@@ -13,6 +13,8 @@ public interface DataSource
 {
     public boolean openSource(File file);
     
+    public long getPointCount();
+    
     public PointData readSource() throws IOException, ParseException;
     
     public void closeSource();
