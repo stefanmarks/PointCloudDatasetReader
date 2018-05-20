@@ -14,7 +14,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 
 /**
- *
+ * Main point cloud data conversion form
+ * 
  * @author Stefan Marks
  */
 public class MainForm extends javax.swing.JFrame

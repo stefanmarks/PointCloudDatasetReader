@@ -1,9 +1,9 @@
 package nz.ac.aut.SentienceLab.PointCloudDatasetReader;
 
 /**
- * Enumeration with coordinate systems
+ * Enumeration with coordinate systems and conversion methods.
  * 
- * @author smarks
+ * @author Stefan Marks
  */
 
 public enum CoordinateSystem 

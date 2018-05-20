@@ -6,7 +6,6 @@ import java.util.prefs.Preferences;
  * Class for managing the last settings and storing/restoring them
  * 
  * @author  Stefan Marks
- * @version 1.0 - 21.05.2018: Created
  */
 public class Settings 
 {
