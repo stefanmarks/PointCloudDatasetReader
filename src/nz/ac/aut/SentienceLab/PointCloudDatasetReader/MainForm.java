@@ -58,8 +58,7 @@ public class MainForm extends javax.swing.JFrame
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
         javax.swing.JPanel pnlMain = new javax.swing.JPanel();
@@ -83,6 +82,7 @@ public class MainForm extends javax.swing.JFrame
         prgConverting = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Point Cloud Dataset Converter");
 
         pnlMain.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         pnlMain.setLayout(new java.awt.BorderLayout(0, 10));
@@ -108,10 +108,8 @@ public class MainForm extends javax.swing.JFrame
         pnlSettings.add(txtSource, gridBagConstraints);
 
         btnSource.setText("...");
-        btnSource.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnSource.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSourceActionPerformed(evt);
             }
         });
@@ -177,10 +175,8 @@ public class MainForm extends javax.swing.JFrame
         pnlSettings.add(txtDestination, gridBagConstraints);
 
         btnDestination.setText("...");
-        btnDestination.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnDestination.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDestinationActionPerformed(evt);
             }
         });
@@ -229,10 +225,8 @@ public class MainForm extends javax.swing.JFrame
         pnlButtons.setLayout(new java.awt.GridLayout(0, 1, 0, 10));
 
         btnStart.setText("Start Conversion");
-        btnStart.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnStart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnStartActionPerformed(evt);
             }
         });
