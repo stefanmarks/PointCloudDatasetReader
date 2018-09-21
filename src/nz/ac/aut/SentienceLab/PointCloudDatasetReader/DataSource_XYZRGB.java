@@ -16,7 +16,7 @@ public class DataSource_XYZRGB implements DataSource
 {
     public DataSource_XYZRGB()
     {
-        separatorIdx = 0;
+        separator = null;
     }
     
 
@@ -30,7 +30,8 @@ public class DataSource_XYZRGB implements DataSource
             
             String header = reader.readLine();
             header  = header.replace("//", "").trim().replace(" ", "").toLowerCase();
-            headers = header.split(",");
+            determineSeparator(header);
+            headers = header.split(separator);
             
             pointCount = Long.parseLong(reader.readLine());
             System.out.println("Opening XYZRGB file with " + pointCount + " points "
@@ -62,12 +63,7 @@ public class DataSource_XYZRGB implements DataSource
         {
             pd = new PointData();
             
-            String[] parts = line.trim().split(separators[separatorIdx]);
-            while ( parts.length < 3 )
-            {
-                separatorIdx = (separatorIdx + 1) % separators.length;
-                parts = line.split(separators[separatorIdx]);
-            }
+            String[] parts = line.trim().split(separator);
                 
             for ( int idx = 0 ; idx < parts.length ; idx++ )
             {
@@ -116,9 +112,23 @@ public class DataSource_XYZRGB implements DataSource
     }
 
     
-    private       BufferedReader reader;
-    private       String[]       headers;
-    private       long           pointCount;
-    private final String[]       separators = { ",", "\t", " " };   
-    private       int            separatorIdx;
+    private void determineSeparator(String line)
+    {
+        String[] separators   = { ",", "\t", " " };
+        String[] parts;
+        int      idx = 0;
+        do
+        {
+            parts = line.split(separators[idx]);
+            if ( parts.length >= 3) { separator = separators[idx]; }
+            idx++;
+            if ( idx == separators.length ) { separator = ","; } // fallback
+        } while (separator == null);
+    }
+    
+    
+    private BufferedReader reader;
+    private String[]       headers;
+    private String         separator;
+    private long           pointCount;
 }
