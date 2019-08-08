@@ -18,7 +18,6 @@ public class Settings
     private final String KEY_SRC_CSYS  = "SourceCoordinateSystem";
     private final String KEY_DST_FILE  = "DestinationFilename";
     private final String KEY_DST_CSYS  = "DestinationCoordinateSystem";
-    private final String KEY_RANDOMISE = "Randomise";
     
 	
     public String getSourceFile()
@@ -64,17 +63,6 @@ public class Settings
     public void setDestinationCSys(CoordinateSystem csys)
     {
         preferences.put(KEY_DST_CSYS, csys.toString());
-    }
-    
-
-    public boolean getRandomiseFlag()
-    {
-        return preferences.getBoolean(KEY_RANDOMISE, false);
-    }
-    
-    public void setRandomiseFlag(boolean randomise)
-    {
-        preferences.putBoolean(KEY_RANDOMISE, randomise);
     }
     
 

@@ -37,29 +37,28 @@ public enum CoordinateSystem
     
     public static void convert(PointData in, CoordinateSystem systemFrom, CoordinateSystem systemTo)
     {
-        float right, up, forward;
+        double coordRight, coordUp, coordForward;
         switch (systemFrom)
         {
-            case XR_YF_ZU : right = in.x; up = in.z; forward = in.y; break;
-            default       : right = in.x; up = in.y; forward = in.z; break;
+            case XR_YF_ZU : coordRight = in.x; coordUp = in.z; coordForward = in.y; break;
+            default       : coordRight = in.x; coordUp = in.y; coordForward = in.z; break;
         }
         switch (systemTo)
         {
-            case XR_YF_ZU : in.x = right; in.z = up; in.y = forward; break;
-            default       : in.x = right; in.y = up; in.z = forward; break;
+            case XR_YF_ZU : in.x = coordRight; in.z = coordUp; in.y = coordForward; break;
+            default       : in.x = coordRight; in.y = coordUp; in.z = coordForward; break;
         }
         
+        float normRight, normUp, normForward;
         switch (systemFrom)
         {
-            case XR_YF_ZU : right = in.nx; up = in.nz; forward = in.ny; break;
-            default       : right = in.nx; up = in.ny; forward = in.nz; break;
+            case XR_YF_ZU : normRight = in.nx; normUp = in.nz; normForward = in.ny; break;
+            default       : normRight = in.nx; normUp = in.ny; normForward = in.nz; break;
         }
         switch (systemTo)
         {
-            case XR_YF_ZU : in.nx = right; in.nz = up; in.ny = forward; break;
-            default       : in.nx = right; in.ny = up; in.nz = forward; break;
-        }
-    }
-            
+            case XR_YF_ZU : in.nx = normRight; in.nz = normUp; in.ny = normForward; break;
+            default       : in.nx = normRight; in.ny = normUp; in.nz = normForward; break;
+        }}     
     private String name;    
 }

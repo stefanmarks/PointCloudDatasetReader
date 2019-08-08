@@ -96,7 +96,7 @@ public class DataSource_XYZRGB implements DataSource
     {
         try
         {
-            reader.close();
+            if (reader != null) reader.close();
         }
         catch (IOException e)
         {

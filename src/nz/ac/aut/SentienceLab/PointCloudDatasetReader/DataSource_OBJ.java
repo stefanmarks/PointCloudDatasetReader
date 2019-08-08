@@ -94,7 +94,7 @@ public class DataSource_OBJ implements DataSource
     {
         try
         {
-            reader.close();
+            if (reader != null) reader.close();
         }
         catch (IOException e)
         {

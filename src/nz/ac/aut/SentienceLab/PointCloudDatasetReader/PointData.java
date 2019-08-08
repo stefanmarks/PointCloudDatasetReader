@@ -9,9 +9,10 @@ import java.nio.ByteBuffer;
  */
 public class PointData 
 {
-    public float x, y, z, size;
-    public float r, g, b, a, intensity;
-    public float nx, ny, nz;
+    public double x, y, z;
+    public float  size;
+    public float  r, g, b, a, intensity;
+    public float  nx, ny, nz;
     
     
     public PointData()
@@ -24,13 +25,17 @@ public class PointData
     }
     
     
-    public void serialise(ByteBuffer buf)
+    public void serialize(ByteBuffer buf, PointCloudData pc)
     {
-        buf.putFloat(x).putFloat(y).putFloat(z).putFloat(size);
-        buf.putFloat(r).putFloat(g).putFloat(b).putFloat(a).putFloat(intensity);
+        buf.putFloat((float) (x - pc.xOffset));
+        buf.putFloat((float) (y - pc.yOffset));
+        buf.putFloat((float) (z - pc.zOffset));
+        buf.putFloat(size);
+        buf.putFloat(r).putFloat(g).putFloat(b).putFloat(a);
+        buf.putFloat(intensity);
         buf.putFloat(nx).putFloat(ny).putFloat(nz);
     }
-    
-    
-    public static final int SIZE = 4 * 12;
+	
+	
+    public static final int SERIALIZED_SIZE = Float.BYTES * 12;
 }

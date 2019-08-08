@@ -7,9 +7,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 
@@ -25,7 +22,9 @@ public class MainForm extends javax.swing.JFrame
      */
     public MainForm()
     {
-        settings = new Settings();
+        settings   = new Settings();
+        pointCloud = new PointCloudData();
+        
         initComponents();
         readSettings();
     }
@@ -37,7 +36,6 @@ public class MainForm extends javax.swing.JFrame
         cbxSourceCSys.setSelectedItem(settings.getSourceCSys());
         txtDestination.setText(settings.getDestinationFile());
         cbxDestinationCSys.setSelectedItem(settings.getDestinationCSys());
-        chkRandomise.setSelected(rootPaneCheckingEnabled);
     }
     
     
@@ -47,7 +45,6 @@ public class MainForm extends javax.swing.JFrame
         settings.setSourceCSys((CoordinateSystem) cbxSourceCSys.getSelectedItem());
         settings.setDestinationFile(txtDestination.getText());
         settings.setDestinationCSys((CoordinateSystem) cbxDestinationCSys.getSelectedItem());
-        settings.setRandomiseFlag(chkRandomise.isSelected());
     }
     
     
@@ -62,7 +59,7 @@ public class MainForm extends javax.swing.JFrame
         java.awt.GridBagConstraints gridBagConstraints;
 
         javax.swing.JPanel pnlMain = new javax.swing.JPanel();
-        pnlSettings = new javax.swing.JPanel();
+        pnlSource = new javax.swing.JPanel();
         javax.swing.JLabel lblSource = new javax.swing.JLabel();
         txtSource = new javax.swing.JTextField();
         btnSource = new javax.swing.JButton();
@@ -70,33 +67,43 @@ public class MainForm extends javax.swing.JFrame
         cbxSourceType = new javax.swing.JComboBox<>();
         javax.swing.JLabel lblSourceCSys = new javax.swing.JLabel();
         cbxSourceCSys = new javax.swing.JComboBox<>();
+        btnLoad = new javax.swing.JButton();
+        javax.swing.JPanel pnlProcessing = new javax.swing.JPanel();
+        btnRandomise = new javax.swing.JButton();
+        javax.swing.JLabel lblBounds = new javax.swing.JLabel();
+        txtBounds = new javax.swing.JTextField();
+        javax.swing.JLabel lblOffset = new javax.swing.JLabel();
+        txtOffsetX = new javax.swing.JTextField();
+        txtOffsetY = new javax.swing.JTextField();
+        txtOffsetZ = new javax.swing.JTextField();
+        javax.swing.JPanel pnlDestination = new javax.swing.JPanel();
         javax.swing.JLabel lblDestination = new javax.swing.JLabel();
         txtDestination = new javax.swing.JTextField();
         btnDestination = new javax.swing.JButton();
         javax.swing.JLabel lblDestinationCSys = new javax.swing.JLabel();
         cbxDestinationCSys = new javax.swing.JComboBox<>();
-        javax.swing.JLabel lblRandomise = new javax.swing.JLabel();
-        chkRandomise = new javax.swing.JCheckBox();
-        javax.swing.JPanel pnlButtons = new javax.swing.JPanel();
-        btnStart = new javax.swing.JButton();
+        btnSave = new javax.swing.JButton();
+        javax.swing.JPanel pnlStatus = new javax.swing.JPanel();
         prgConverting = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Point Cloud Dataset Converter");
+        getContentPane().setLayout(new java.awt.BorderLayout());
 
         pnlMain.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        pnlMain.setLayout(new java.awt.BorderLayout(0, 10));
+        pnlMain.setLayout(new java.awt.GridBagLayout());
 
-        pnlSettings.setLayout(new java.awt.GridBagLayout());
+        pnlSource.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createTitledBorder("Source"), javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        pnlSource.setLayout(new java.awt.GridBagLayout());
 
-        lblSource.setText("Source:");
+        lblSource.setText("Filename:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
-        pnlSettings.add(lblSource, gridBagConstraints);
+        pnlSource.add(lblSource, gridBagConstraints);
 
         txtSource.setText(".\\input.csv");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -105,7 +112,7 @@ public class MainForm extends javax.swing.JFrame
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        pnlSettings.add(txtSource, gridBagConstraints);
+        pnlSource.add(txtSource, gridBagConstraints);
 
         btnSource.setText("...");
         btnSource.addActionListener(new java.awt.event.ActionListener() {
@@ -118,16 +125,16 @@ public class MainForm extends javax.swing.JFrame
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 0);
-        pnlSettings.add(btnSource, gridBagConstraints);
+        pnlSource.add(btnSource, gridBagConstraints);
 
-        lblSourceType.setText("Source Type:");
+        lblSourceType.setText("Type:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
-        pnlSettings.add(lblSourceType, gridBagConstraints);
+        pnlSource.add(lblSourceType, gridBagConstraints);
 
         cbxSourceType.setModel(new DefaultComboBoxModel(new DataSource[] { new DataSource_XYZRGB(), new DataSource_OBJ() }));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -136,16 +143,16 @@ public class MainForm extends javax.swing.JFrame
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        pnlSettings.add(cbxSourceType, gridBagConstraints);
+        pnlSource.add(cbxSourceType, gridBagConstraints);
 
-        lblSourceCSys.setText("Source CSys:");
+        lblSourceCSys.setText("Coordinate System:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
-        pnlSettings.add(lblSourceCSys, gridBagConstraints);
+        pnlSource.add(lblSourceCSys, gridBagConstraints);
 
         cbxSourceCSys.setModel(new DefaultComboBoxModel(new CoordinateSystem[] { CoordinateSystem.XR_YF_ZU, CoordinateSystem.XR_YU_ZF }));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -154,25 +161,127 @@ public class MainForm extends javax.swing.JFrame
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        pnlSettings.add(cbxSourceCSys, gridBagConstraints);
+        pnlSource.add(cbxSourceCSys, gridBagConstraints);
 
-        lblDestination.setText("Destination:");
+        btnLoad.setText("Load");
+        btnLoad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoadActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        pnlSource.add(btnLoad, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        pnlMain.add(pnlSource, gridBagConstraints);
+
+        pnlProcessing.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createTitledBorder("Processing"), javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        pnlProcessing.setLayout(new java.awt.GridBagLayout());
+
+        btnRandomise.setText("Randomise");
+        btnRandomise.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRandomiseActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
+        pnlProcessing.add(btnRandomise, gridBagConstraints);
+
+        lblBounds.setText("Bounds:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
+        pnlProcessing.add(lblBounds, gridBagConstraints);
+
+        txtBounds.setEditable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
+        pnlProcessing.add(txtBounds, gridBagConstraints);
+
+        lblOffset.setText("Offset: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        pnlProcessing.add(lblOffset, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        pnlProcessing.add(txtOffsetX, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
+        pnlProcessing.add(txtOffsetY, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        pnlProcessing.add(txtOffsetZ, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
+        pnlMain.add(pnlProcessing, gridBagConstraints);
+
+        pnlDestination.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createTitledBorder("Destination"), javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        pnlDestination.setLayout(new java.awt.GridBagLayout());
+
+        lblDestination.setText("Filename:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
-        pnlSettings.add(lblDestination, gridBagConstraints);
+        pnlDestination.add(lblDestination, gridBagConstraints);
 
         txtDestination.setText(".\\output.bytes");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        pnlSettings.add(txtDestination, gridBagConstraints);
+        pnlDestination.add(txtDestination, gridBagConstraints);
 
         btnDestination.setText("...");
         btnDestination.addActionListener(new java.awt.event.ActionListener() {
@@ -182,61 +291,63 @@ public class MainForm extends javax.swing.JFrame
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 0);
-        pnlSettings.add(btnDestination, gridBagConstraints);
+        pnlDestination.add(btnDestination, gridBagConstraints);
 
-        lblDestinationCSys.setText("Destination CSys:");
+        lblDestinationCSys.setText("Coordinate System:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
-        pnlSettings.add(lblDestinationCSys, gridBagConstraints);
+        pnlDestination.add(lblDestinationCSys, gridBagConstraints);
 
         cbxDestinationCSys.setModel(new DefaultComboBoxModel(new CoordinateSystem[] { CoordinateSystem.XR_YF_ZU, CoordinateSystem.XR_YU_ZF }));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        pnlSettings.add(cbxDestinationCSys, gridBagConstraints);
+        pnlDestination.add(cbxDestinationCSys, gridBagConstraints);
 
-        lblRandomise.setText("Randomise:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
-        pnlSettings.add(lblRandomise, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        pnlSettings.add(chkRandomise, gridBagConstraints);
-
-        pnlMain.add(pnlSettings, java.awt.BorderLayout.CENTER);
-
-        pnlButtons.setLayout(new java.awt.GridLayout(0, 1, 0, 10));
-
-        btnStart.setText("Start Conversion");
-        btnStart.addActionListener(new java.awt.event.ActionListener() {
+        btnSave.setText("Save");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnStartActionPerformed(evt);
+                btnSaveActionPerformed(evt);
             }
         });
-        pnlButtons.add(btnStart);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        pnlDestination.add(btnSave, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        pnlMain.add(pnlDestination, gridBagConstraints);
+
+        pnlStatus.setLayout(new java.awt.BorderLayout());
 
         prgConverting.setEnabled(false);
         prgConverting.setStringPainted(true);
-        pnlButtons.add(prgConverting);
+        pnlStatus.add(prgConverting, java.awt.BorderLayout.CENTER);
 
-        pnlMain.add(pnlButtons, java.awt.BorderLayout.PAGE_END);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
+        pnlMain.add(pnlStatus, gridBagConstraints);
 
         getContentPane().add(pnlMain, java.awt.BorderLayout.CENTER);
 
@@ -245,20 +356,19 @@ public class MainForm extends javax.swing.JFrame
     }// </editor-fold>//GEN-END:initComponents
 
     
-    private void btnStartActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnStartActionPerformed
-    {//GEN-HEADEREND:event_btnStartActionPerformed
-        if ( converter != null && converter.isRunning() )
+    private void btnLoadActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnLoadActionPerformed
+    {//GEN-HEADEREND:event_btnLoadActionPerformed
+        if (activeTask != null)
         {
-            converter.stop();
+            if (activeTask instanceof LoaderTask) activeTask.stop();
         }
         else
         {
             writeSettings();
-            converter       = new Converter();
-            converterThread = new Thread(converter);
-            converterThread.start();
+            LoaderTask l = new LoaderTask();
+            l.start();
         }        
-    }//GEN-LAST:event_btnStartActionPerformed
+    }//GEN-LAST:event_btnLoadActionPerformed
 
     
     private void btnDestinationActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnDestinationActionPerformed
@@ -294,6 +404,26 @@ public class MainForm extends javax.swing.JFrame
     }//GEN-LAST:event_btnSourceActionPerformed
 
     
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        if (activeTask != null)
+        {
+            if (activeTask instanceof WriterTask) activeTask.stop();
+        }
+        else
+        {
+            writeSettings();
+            WriterTask w = new WriterTask();
+            w.start();
+        }      
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    
+    private void btnRandomiseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRandomiseActionPerformed
+        RandomizerTask r = new RandomizerTask();
+        r.start();
+    }//GEN-LAST:event_btnRandomiseActionPerformed
+
+    
     
     /**
      * Main program entry point.
@@ -309,176 +439,301 @@ public class MainForm extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDestination;
+    private javax.swing.JButton btnLoad;
+    private javax.swing.JButton btnRandomise;
+    private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSource;
-    private javax.swing.JButton btnStart;
     private javax.swing.JComboBox<String> cbxDestinationCSys;
     private javax.swing.JComboBox<String> cbxSourceCSys;
     private javax.swing.JComboBox<String> cbxSourceType;
-    private javax.swing.JCheckBox chkRandomise;
-    private javax.swing.JPanel pnlSettings;
+    private javax.swing.JPanel pnlSource;
     private javax.swing.JProgressBar prgConverting;
+    private javax.swing.JTextField txtBounds;
     private javax.swing.JTextField txtDestination;
+    private javax.swing.JTextField txtOffsetX;
+    private javax.swing.JTextField txtOffsetY;
+    private javax.swing.JTextField txtOffsetZ;
     private javax.swing.JTextField txtSource;
     // End of variables declaration//GEN-END:variables
 
-    
-    private class Converter implements Runnable
+
+    private enum TaskState
     {
+        Standby, Initializing, Running, Stopping, Stopped
+    }
+
+
+    private abstract class Task implements Runnable
+    {
+        protected Task()
+        {
+            m_state = TaskState.Standby;
+        }
+        
+        public void start()
+        {
+            Thread t = new Thread(this);
+            activeTask = this;
+            t.start();
+        }
+        
+        
+        public abstract void initialize();
+        
         @Override
         public void run()
         {
-            if ( !execute )
-            {
-                execute = true;
-                initialise();
-                
-                CoordinateSystem csysSrc = (CoordinateSystem) cbxSourceCSys.getSelectedItem();
-                CoordinateSystem csysDst = (CoordinateSystem) cbxDestinationCSys.getSelectedItem();
-                
-                DataSource ds = (DataSource) cbxSourceType.getSelectedItem();
-                List<PointData> pointList = new ArrayList<>();
-                if ( ds.openSource(new File(txtSource.getText())) )
-                {
-                    // set progress bar determinate when point count known
-                    long pointCount = ds.getPointCount();
-                    prgConverting.setIndeterminate(pointCount < 0);
-                    
-                    final int updateInterval = 1000;
-                    int updateIdx = 0;
-                                
-                    PointData p = null;
-                    do
-                    {
-                        try
-                        {
-                            p = ds.readSource();
-                            if ( p != null)
-                            {
-                                CoordinateSystem.convert(p, csysSrc, csysDst);
-                                pointList.add(p);
-                                
-                                updateIdx++;
-                                if (updateIdx > updateInterval)
-                                {
-                                    if (pointCount > 0)
-                                    {
-                                        int percent = (int) (100 * pointList.size() / pointCount);
-                                        prgConverting.setValue(percent);
-                                        prgConverting.setString(pointList.size() + " / " + pointCount + " (" + percent + "%)");
-                                    }
-                                    else
-                                    {
-                                        prgConverting.setString(Long.toString(pointList.size()));
-                                    }
-                                    updateIdx = 0;   
-                                }                                
-                            }
-                        }
-                        catch (IOException | ParseException e)
-                        {
-                            System.err.println(e);
-                            execute = false;
-                        }
-                    }
-                    while ( execute && (p != null) );
-                }
-                else
-                {
-                    execute = false;
-                }
-                ds.closeSource();
-                
-                if ( execute )
-                {
-                    prgConverting.setIndeterminate(false);
-
-                    if (chkRandomise.isSelected())
-                    {
-                        prgConverting.setString("Randomising...");
-                        Collections.shuffle(pointList);
-                    }
-                    
-                    prgConverting.setValue(0);
-                    try
-                    {
-                        FileChannel chn = new FileOutputStream(txtDestination.getText()).getChannel();
-                        ByteBuffer  buf = ByteBuffer.allocate(PointData.SIZE * 2);
-                        buf.order(ByteOrder.LITTLE_ENDIAN);
-                        
-                        // store point count
-                        buf.putInt(pointList.size());
-                        
-                        int index      = 0;
-                        int oldPercent = -1;
-                        for (PointData point : pointList) 
-                        {
-                            point.serialise(buf);
-                            buf.flip();
-                            chn.write(buf);
-                            buf.rewind();
-                            index++;
-                            int percent = index * 100 / pointList.size();
-                            if (percent != oldPercent)
-                            {
-                                oldPercent = percent;
-                                prgConverting.setString(index + " / " + pointList.size() + " (" + percent + "%)");
-                                prgConverting.setValue(percent);
-                            }
-                            if ( !execute ) break;
-                        }
-                        
-                        chn.close();
-                    }
-                    catch (IOException e)
-                    {
-                        System.err.println(e);
-                        execute = false;
-                    }
-                    prgConverting.setValue(0);
-                    prgConverting.setIndeterminate(true);
-                    prgConverting.setString("");
-                }
-                
-                terminate();
-            }
-        }
-
-        
-        private void initialise()
-        {
-            pnlSettings.setEnabled(false);
-            btnStart.setText("Cancel");
-            prgConverting.setEnabled(true);
-            prgConverting.setString("");
-            prgConverting.setIndeterminate(true);
+            m_state = TaskState.Initializing;
+            initialize();
+            m_state = TaskState.Running;
+            execute();
+            m_state = TaskState.Stopping;
+            terminate();
+            m_state = TaskState.Stopped;
+            activeTask = null;
         }
         
-        
-        private void terminate()
-        {
-            pnlSettings.setEnabled(true);
-            btnStart.setText("Start Conversion");
-            prgConverting.setEnabled(false);
-            prgConverting.setString("");
-            prgConverting.setIndeterminate(false);
-        }
-        
+        public abstract void execute();
+                
+        public abstract void terminate();
         
         public boolean isRunning()
         {
-            return execute;
-        }                    
+            return m_state == TaskState.Running;
+        }
         
+        public boolean isStopping()
+        {
+            return m_state == TaskState.Stopping;
+        }
         
         public void stop()
         {
-            execute = false;
+            if (isRunning())
+            {
+                m_state = TaskState.Stopping;
+            }
         }
         
-        private volatile boolean execute;
+        protected TaskState m_state;
     }
     
-    private final Settings  settings;
-    private       Thread    converterThread;
-    private       Converter converter;
+    
+    private class LoaderTask extends Task
+    {
+        @Override
+        public void initialize()
+        {
+            btnLoad.setText("Cancel");
+            btnRandomise.setEnabled(false);
+            btnSave.setEnabled(false);
+            setStatus("", 0);
+        }
+        
+        
+        @Override
+        public void execute()
+        {
+            CoordinateSystem csysSrc = (CoordinateSystem) cbxSourceCSys.getSelectedItem();
+            CoordinateSystem csysDst = (CoordinateSystem) cbxDestinationCSys.getSelectedItem();
+
+            DataSource ds = (DataSource) cbxSourceType.getSelectedItem();
+
+            if ( ds.openSource(new File(txtSource.getText())) )
+            {
+                // set progress bar determinate when point count known
+                long pointCount = ds.getPointCount();
+                prgConverting.setIndeterminate(pointCount < 0);
+
+                pointCloud.reset();
+
+                final int updateInterval = 1000;
+                int updateIdx = 0;
+
+                PointData p = null;
+                do
+                {
+                    try
+                    {
+                        p = ds.readSource();
+                        if ( p != null)
+                        {
+                            CoordinateSystem.convert(p, csysSrc, csysDst);
+                            pointCloud.addPoint(p);
+
+                            updateIdx++;
+                            if (updateIdx > updateInterval)
+                            {
+                                if (pointCount > 0)
+                                {
+                                    int percent = (int) (100 * pointCloud.pointCount() / pointCount);
+                                    setStatus(pointCloud.pointCount() + " / " + pointCount + " (" + percent + "%)", percent);
+                                }
+                                else
+                                {
+                                    setStatus(Long.toString(pointCloud.pointCount()), -1);
+                                }
+                                updateIdx = 0;   
+                            }                                
+                        }
+                        else
+                        {
+                            setStatus("Point cloud loaded");
+                            stop();
+                            writePointCloudInfo();
+                        }
+                    }
+                    catch (IOException | ParseException e)
+                    {
+                            System.err.println(e);
+                            setStatus("Could not load point cloud");
+                            stop();
+                    }
+                }
+                while ( isRunning() );
+            }
+
+            ds.closeSource();
+        }
+        
+        
+        @Override
+        public void terminate()
+        {
+            btnLoad.setText("Load");
+            btnSave.setEnabled(true);
+            btnRandomise.setEnabled(true);
+        }
+    }
+    
+    
+    private class RandomizerTask extends Task
+    {
+        @Override
+        public void initialize() {
+            btnRandomise.setEnabled(false);
+            setStatus("Randomising...");
+        }
+
+
+        @Override
+        public void execute()
+        {
+            pointCloud.randomise();
+        }
+
+
+        @Override
+        public void terminate() {
+            setStatus("Point cloud randomised");
+            btnRandomise.setEnabled(true);
+        }
+    }
+    
+    
+    private class WriterTask extends Task
+    {
+        @Override
+        public void initialize()
+        {
+            btnSave.setText("Cancel");
+            btnLoad.setEnabled(false);
+            setStatus("", 0);
+        }
+        
+        
+        @Override
+        public void execute()
+        {
+            try
+            {
+                final int updateInterval = 1000;
+                int updateIdx = 0;
+                int index = 0;
+
+                FileChannel chn = new FileOutputStream(txtDestination.getText()).getChannel();
+                ByteBuffer  buf = ByteBuffer.allocate(PointData.SERIALIZED_SIZE * 2 * updateInterval);
+                buf.order(ByteOrder.LITTLE_ENDIAN);
+
+                // store point count
+                pointCloud.serialize(buf);
+                buf.flip();
+                chn.write(buf);
+                buf.clear();
+
+                for (PointData point : pointCloud.points) 
+                {
+                    point.serialize(buf, pointCloud);
+                    
+                    index++;
+                    updateIdx++;
+                    if (updateIdx >= updateInterval)
+                    {
+                        // write the buffer
+                        buf.flip();
+                        chn.write(buf);
+                        buf.clear();
+
+                        int percent = index * 100 / pointCloud.pointCount();
+                        setStatus(index + " / " + pointCloud.pointCount() + " (" + percent + "%)", percent);
+                        updateIdx = 0;
+                    }
+
+                    if ( isStopping() ) break;
+                }
+
+                // write the remainder of the buffer
+                buf.flip();
+                chn.write(buf);
+                buf.clear();
+
+                chn.close();
+                setStatus("Point cloud saved");
+            }
+            catch (IOException e)
+            {
+                System.err.println(e);
+                setStatus("Could not save point cloud");
+            }
+        }
+        
+        
+        @Override
+        public void terminate()
+        {
+            btnSave.setText("Save");
+            btnLoad.setEnabled(true);
+        }
+    }
+    
+    
+    private void writePointCloudInfo()
+    {
+        final String format = "%f";
+        txtBounds.setText(pointCloud.bbox.toString());
+        txtOffsetX.setText(String.format(format, -(pointCloud.bbox.xMax + pointCloud.bbox.xMin) / 2));
+        txtOffsetY.setText(String.format(format, -(pointCloud.bbox.yMax + pointCloud.bbox.yMin) / 2));
+        txtOffsetZ.setText(String.format(format, -(pointCloud.bbox.zMax + pointCloud.bbox.zMin) / 2));
+    }
+    
+	
+    private void setStatus(String status)
+    {
+        prgConverting.setIndeterminate(false);
+        prgConverting.setValue(0);
+        prgConverting.setString(status);
+    }
+
+
+    private void setStatus(String status, int percent)
+    {
+        prgConverting.setIndeterminate(percent < 0);
+        prgConverting.setString(status);
+        prgConverting.setValue(percent);
+    }
+	
+    
+    private final Settings       settings;
+    private final PointCloudData pointCloud;
+    private       Task           activeTask;
 }
