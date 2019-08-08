@@ -59,6 +59,8 @@ public enum CoordinateSystem
         {
             case XR_YF_ZU : in.nx = normRight; in.nz = normUp; in.ny = normForward; break;
             default       : in.nx = normRight; in.ny = normUp; in.nz = normForward; break;
-        }}     
-    private String name;    
+        }
+    }
+    
+    private final String name;    
 }

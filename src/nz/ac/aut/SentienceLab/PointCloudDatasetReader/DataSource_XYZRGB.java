@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
+import javax.swing.JOptionPane;
 
 
 /**
@@ -28,16 +29,53 @@ public class DataSource_XYZRGB implements DataSource
         {
             reader = new BufferedReader(new FileReader(file));
             
+            // check for the header            
+            reader.mark(128);
             String header = reader.readLine();
-            header  = header.replace("//", "").trim().replace(" ", "").toLowerCase();
-            determineSeparator(header);
-            headers = header.split(separator);
-            
-            pointCount = Long.parseLong(reader.readLine());
-            System.out.println("Opening XYZRGB file with " + pointCount + " points "
-                + "and headers '" + header + "'");
-            
-            success = true;
+            if (!header.trim().startsWith("//"))
+            {
+                header = JOptionPane.showInputDialog(null, 
+                    "There is no header information.\n" +
+                    "This is the first line of data:\n" + header + "\n" +
+                    "Please enter the header line", 
+                    "Missing Header", 
+                    JOptionPane.QUESTION_MESSAGE);
+                reader.reset();
+            }
+            if (header != null)
+            {
+                header = header.replace("//", "").trim().toLowerCase();
+                determineSeparator(header);
+                if (separator != null)
+                {
+                    headers = header.split(separator);
+
+                    // check for point count line
+                    reader.mark(128);
+                    String strPointCount = reader.readLine();
+                    if (strPointCount.matches("^[0-9]+$"))
+                    {
+                        pointCount = Long.parseLong(reader.readLine());
+                        System.out.println("Opening XYZRGB file with " + pointCount + " points "
+                            + "and headers '" + header + "'");
+                    }
+                    else
+                    {
+                        reader.reset();
+                        pointCount = 0;
+                        System.out.println("Opening XYZRGB file with headers '" + header + "'");
+                    }
+                    success = true;
+                }
+                else
+                {
+                    System.err.println("Could not determine separator for XYZRGB file");
+                }
+            }
+            else
+            {
+                System.err.println("No suitable header found");
+            }
         }
         catch (IOException e)
         {
@@ -67,23 +105,23 @@ public class DataSource_XYZRGB implements DataSource
                 
             for ( int idx = 0 ; idx < parts.length ; idx++ )
             {
-                float value = Float.parseFloat(parts[idx]);
+                double value = Double.parseDouble(parts[idx]);
                 switch (headers[idx])
                 {
                     case "x" : pd.x = value; break;
                     case "y" : pd.y = value; break;
                     case "z" : pd.z = value; break;
 
-                    case "nx" : pd.nx = value; break;
-                    case "ny" : pd.ny = value; break;
-                    case "nz" : pd.nz = value; break;
+                    case "nx" : pd.nx = (float) value; break;
+                    case "ny" : pd.ny = (float) value; break;
+                    case "nz" : pd.nz = (float) value; break;
 
-                    case "r" : pd.r = value / 255; break;
-                    case "g" : pd.g = value / 255; break;
-                    case "b" : pd.b = value / 255; break;
-                    case "a" : pd.a = value / 255; break;
+                    case "r" : pd.r = (float) value / 255; break;
+                    case "g" : pd.g = (float) value / 255; break;
+                    case "b" : pd.b = (float) value / 255; break;
+                    case "a" : pd.a = (float) value / 255; break;
                     
-                    case "intensity" : pd.intensity = value; break;
+                    case "intensity" : pd.intensity = (float) value; break;
                 }
             }
         }
@@ -114,16 +152,15 @@ public class DataSource_XYZRGB implements DataSource
     
     private void determineSeparator(String line)
     {
-        String[] separators   = { ",", "\t", " " };
-        String[] parts;
-        int      idx = 0;
-        do
+        final String[] separators = { ",", "\t", " " };
+        for (String sep : separators)
         {
-            parts = line.split(separators[idx]);
-            if ( parts.length >= 3) { separator = separators[idx]; }
-            idx++;
-            if ( idx == separators.length ) { separator = ","; } // fallback
-        } while (separator == null);
+            String[] parts = line.split(sep);
+            if ( parts.length >= 3) 
+            { 
+                separator = sep; 
+            }            
+        } 
     }
     
     

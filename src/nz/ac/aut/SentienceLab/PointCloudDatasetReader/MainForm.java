@@ -68,7 +68,7 @@ public class MainForm extends javax.swing.JFrame
         javax.swing.JLabel lblSourceCSys = new javax.swing.JLabel();
         cbxSourceCSys = new javax.swing.JComboBox<>();
         btnLoad = new javax.swing.JButton();
-        javax.swing.JPanel pnlProcessing = new javax.swing.JPanel();
+        pnlProcessing = new javax.swing.JPanel();
         btnRandomise = new javax.swing.JButton();
         javax.swing.JLabel lblBounds = new javax.swing.JLabel();
         txtBounds = new javax.swing.JTextField();
@@ -76,7 +76,7 @@ public class MainForm extends javax.swing.JFrame
         txtOffsetX = new javax.swing.JTextField();
         txtOffsetY = new javax.swing.JTextField();
         txtOffsetZ = new javax.swing.JTextField();
-        javax.swing.JPanel pnlDestination = new javax.swing.JPanel();
+        pnlDestination = new javax.swing.JPanel();
         javax.swing.JLabel lblDestination = new javax.swing.JLabel();
         txtDestination = new javax.swing.JTextField();
         btnDestination = new javax.swing.JButton();
@@ -88,7 +88,6 @@ public class MainForm extends javax.swing.JFrame
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Point Cloud Dataset Converter");
-        getContentPane().setLayout(new java.awt.BorderLayout());
 
         pnlMain.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         pnlMain.setLayout(new java.awt.GridBagLayout());
@@ -136,7 +135,7 @@ public class MainForm extends javax.swing.JFrame
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
         pnlSource.add(lblSourceType, gridBagConstraints);
 
-        cbxSourceType.setModel(new DefaultComboBoxModel(new DataSource[] { new DataSource_XYZRGB(), new DataSource_OBJ() }));
+        cbxSourceType.setModel(new DefaultComboBoxModel(new DataSource[] { new DataSource_XYZRGB(), new DataSource_OBJ(),new DataSource_OldFormat()}));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -446,6 +445,8 @@ public class MainForm extends javax.swing.JFrame
     private javax.swing.JComboBox<String> cbxDestinationCSys;
     private javax.swing.JComboBox<String> cbxSourceCSys;
     private javax.swing.JComboBox<String> cbxSourceType;
+    private javax.swing.JPanel pnlDestination;
+    private javax.swing.JPanel pnlProcessing;
     private javax.swing.JPanel pnlSource;
     private javax.swing.JProgressBar prgConverting;
     private javax.swing.JTextField txtBounds;
@@ -525,7 +526,9 @@ public class MainForm extends javax.swing.JFrame
         public void initialize()
         {
             btnLoad.setText("Cancel");
-            btnRandomise.setEnabled(false);
+            pnlSource.setEnabled(true);
+            pnlProcessing.setEnabled(false);
+            pnlDestination.setEnabled(false);
             btnSave.setEnabled(false);
             setStatus("", 0);
         }
@@ -601,8 +604,10 @@ public class MainForm extends javax.swing.JFrame
         public void terminate()
         {
             btnLoad.setText("Load");
+            pnlSource.setEnabled(true);
+            pnlProcessing.setEnabled(true);
+            pnlDestination.setEnabled(true);
             btnSave.setEnabled(true);
-            btnRandomise.setEnabled(true);
         }
     }
     
@@ -611,6 +616,9 @@ public class MainForm extends javax.swing.JFrame
     {
         @Override
         public void initialize() {
+            pnlSource.setEnabled(false);
+            pnlProcessing.setEnabled(false);
+            pnlDestination.setEnabled(false);
             btnRandomise.setEnabled(false);
             setStatus("Randomising...");
         }
@@ -625,6 +633,9 @@ public class MainForm extends javax.swing.JFrame
 
         @Override
         public void terminate() {
+            pnlSource.setEnabled(true);
+            pnlProcessing.setEnabled(true);
+            pnlDestination.setEnabled(true);
             setStatus("Point cloud randomised");
             btnRandomise.setEnabled(true);
         }
@@ -637,8 +648,11 @@ public class MainForm extends javax.swing.JFrame
         public void initialize()
         {
             btnSave.setText("Cancel");
-            btnLoad.setEnabled(false);
+            pnlSource.setEnabled(false);
+            pnlProcessing.setEnabled(false);
+            pnlDestination.setEnabled(true);
             setStatus("", 0);
+            readPointCloudInfo();
         }
         
         
@@ -702,7 +716,9 @@ public class MainForm extends javax.swing.JFrame
         public void terminate()
         {
             btnSave.setText("Save");
-            btnLoad.setEnabled(true);
+            pnlSource.setEnabled(true);
+            pnlProcessing.setEnabled(true);
+            pnlDestination.setEnabled(true);
         }
     }
     
@@ -711,9 +727,17 @@ public class MainForm extends javax.swing.JFrame
     {
         final String format = "%f";
         txtBounds.setText(pointCloud.bbox.toString());
-        txtOffsetX.setText(String.format(format, -(pointCloud.bbox.xMax + pointCloud.bbox.xMin) / 2));
-        txtOffsetY.setText(String.format(format, -(pointCloud.bbox.yMax + pointCloud.bbox.yMin) / 2));
-        txtOffsetZ.setText(String.format(format, -(pointCloud.bbox.zMax + pointCloud.bbox.zMin) / 2));
+        txtOffsetX.setText(String.format(format, (pointCloud.bbox.xMax + pointCloud.bbox.xMin) / 2));
+        txtOffsetY.setText(String.format(format, (pointCloud.bbox.yMax + pointCloud.bbox.yMin) / 2));
+        txtOffsetZ.setText(String.format(format, (pointCloud.bbox.zMax + pointCloud.bbox.zMin) / 2));
+    }
+    
+	
+    private void readPointCloudInfo()
+    {
+        pointCloud.xOffset = Float.parseFloat(txtOffsetX.getText());
+        pointCloud.yOffset = Float.parseFloat(txtOffsetY.getText());
+        pointCloud.zOffset = Float.parseFloat(txtOffsetZ.getText());
     }
     
 	
