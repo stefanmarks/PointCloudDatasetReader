@@ -55,7 +55,7 @@ public class DataSource_XYZRGB implements DataSource
                     String strPointCount = reader.readLine();
                     if (strPointCount.matches("^[0-9]+$"))
                     {
-                        pointCount = Long.parseLong(reader.readLine());
+                        pointCount = Long.parseLong(strPointCount);
                         System.out.println("Opening XYZRGB file with " + pointCount + " points "
                             + "and headers '" + header + "'");
                     }
