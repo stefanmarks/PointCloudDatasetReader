@@ -38,7 +38,7 @@ public class PointCloudData
     }
     
     
-    public int pointCount()
+    public long pointCount()
     {
         return points.size();
     }

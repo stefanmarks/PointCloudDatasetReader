@@ -135,7 +135,7 @@ public class MainForm extends javax.swing.JFrame
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
         pnlSource.add(lblSourceType, gridBagConstraints);
 
-        cbxSourceType.setModel(new DefaultComboBoxModel(new DataSource[] { new DataSource_XYZRGB(), new DataSource_OBJ(),new DataSource_OldFormat()}));
+        cbxSourceType.setModel(new DefaultComboBoxModel(new DataSource[] { new DataSource_PTS(), new DataSource_XYZRGB(), new DataSource_OBJ(),new DataSource_OldFormat()}));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -662,8 +662,8 @@ public class MainForm extends javax.swing.JFrame
             try
             {
                 final int updateInterval = 1000;
-                int updateIdx = 0;
-                int index = 0;
+                long updateIdx = 0;
+                long index     = 0;
 
                 FileChannel chn = new FileOutputStream(txtDestination.getText()).getChannel();
                 ByteBuffer  buf = ByteBuffer.allocate(PointData.SERIALIZED_SIZE * 2 * updateInterval);
@@ -688,8 +688,8 @@ public class MainForm extends javax.swing.JFrame
                         chn.write(buf);
                         buf.clear();
 
-                        int percent = index * 100 / pointCloud.pointCount();
-                        setStatus(index + " / " + pointCloud.pointCount() + " (" + percent + "%)", percent);
+                        long percent = index * 100L / pointCloud.pointCount();
+                        setStatus(index + " / " + pointCloud.pointCount() + " (" + percent + "%)", (int) percent);
                         updateIdx = 0;
                     }
 
