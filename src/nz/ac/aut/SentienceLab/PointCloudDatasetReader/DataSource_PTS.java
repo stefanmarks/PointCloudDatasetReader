@@ -65,12 +65,12 @@ public class DataSource_PTS implements DataSource
                 pd.x  = Float.parseFloat(parts[0]);
                 pd.y  = Float.parseFloat(parts[1]);
                 pd.z  = Float.parseFloat(parts[2]);
-                pd.r  = Float.parseFloat(parts[3]);
-                pd.g  = Float.parseFloat(parts[4]);
-                pd.b  = Float.parseFloat(parts[5]);
+                pd.r  = Float.parseFloat(parts[3]) / 255;
+                pd.g  = Float.parseFloat(parts[4]) / 255;
+                pd.b  = Float.parseFloat(parts[5]) / 255;
                 pd.nx = Float.parseFloat(parts[6]);
-                pd.nx = Float.parseFloat(parts[7]);
-                pd.nx = Float.parseFloat(parts[8]);
+                pd.ny = Float.parseFloat(parts[7]);
+                pd.nz = Float.parseFloat(parts[8]);
             }
         }
         return pd;
